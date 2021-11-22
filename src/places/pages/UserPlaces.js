@@ -27,7 +27,7 @@ const DUMMY_PLACES = [
       lat: "30.082782,31.321106",
       lon: "30.0681037,31.2073443",
     },
-    creator: "u2",
+    creator: "u1",
   },
 ];
 const UserPlaces = () => {
