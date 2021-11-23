@@ -21,7 +21,7 @@ const DUMMY_PLACES = [
     title: "Pyramids",
     desc: "ew3a t23od 3la el haram",
     imageUrl:
-      "https://upload.wikimedia.org/wikipedia/commons/a/a0/Cairotower.jpg",
+      "https://lp-cms-production.imgix.net/2020-11/shutterstockRF_1037036482.jpg",
     address: "Cairo, Egypt",
     location: {
       lat: "30.082782,31.321106",
