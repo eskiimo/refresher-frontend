@@ -11,9 +11,10 @@ const DUMMY_PLACES = [
       "https://upload.wikimedia.org/wikipedia/commons/a/a0/Cairotower.jpg",
     address: "Cairo, Egypt",
     location: {
-      lat: "30.082782,31.321106",
-      lon: "30.0681037,31.2073443",
+      lat: 30.082782,
+      lng: 31.2073443,
     },
+
     creator: "u1",
   },
   {
@@ -24,10 +25,10 @@ const DUMMY_PLACES = [
       "https://lp-cms-production.imgix.net/2020-11/shutterstockRF_1037036482.jpg",
     address: "Cairo, Egypt",
     location: {
-      lat: "30.082782,31.321106",
-      lon: "30.0681037,31.2073443",
+      lat: 30.082782,
+      lng: 31.2073443,
     },
-    creator: "u1",
+    creator: "u2",
   },
 ];
 const UserPlaces = () => {
