@@ -50,8 +50,13 @@ const NewPlace = () => {
     // eslint-disable-next-line
   }, []);
 
+  const onSubmitHandler = (event) => {
+    event.preventDefault();
+    console.log(formState.inputs); //send to BackEnd
+  };
+
   return (
-    <form className="place-form">
+    <form className="place-form" onSubmit={onSubmitHandler}>
       <Input
         id="title"
         element="input"
@@ -67,6 +72,15 @@ const NewPlace = () => {
         label="Description"
         validators={[VALIDATOR_MINLENGTH(5)]}
         errorText="Please Enter A Valid description at least 5 charachters."
+        onInput={InputHandler}
+      />
+      <Input
+        id="address"
+        element="input"
+        type="text"
+        label="address"
+        validators={[VALIDATOR_REQUIRE()]}
+        errorText="Please Enter A Valid Address"
         onInput={InputHandler}
       />
       <Button type="submit" disabled={!formState.isValid}>
