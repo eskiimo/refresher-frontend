@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useEffect,useState} from "react";
 import { useParams } from "react-router-dom";
 import Input from "../../shared/components/FormElements/input";
 import Button from "../../shared/components/FormElements/Button";
@@ -9,9 +9,10 @@ import {
   VALIDATOR_MINLENGTH,
 } from "../../shared/util/validators";
 import { useForm } from "../../shared/hooks/form-hook";
+import Card from "../../shared/components/UiElements/Card";
 
 const DUMMY_PLACES = [
-  {
+  { 
     id: "p1",
     title: "Cairo Tower",
     desc: "ew3a tnot mn fo2 3shan htmot",
@@ -42,21 +43,42 @@ const DUMMY_PLACES = [
 
 const UpdatePlace = () => {
   const placeId = useParams().placeId;
-  const placeToUpdate = DUMMY_PLACES.find((p) => p.id === placeId);
+  const [isLoading,setIsLoading] =useState(true)
 
-  const [formState, inputHandler] = useForm(
+ 
+  const [formState, inputHandler,setFormData] = useForm(
     {
       title: {
-        value: placeToUpdate.title,
-        isValid: true,
+        value: '',
+        isValid: false,
       },
       desc: {
-        value: placeToUpdate.desc,
-        isValid: true,
+        value:'',
+        isValid: false,
       },
     },
-    true
+    false
   );
+
+  const placeToUpdate = DUMMY_PLACES.find((p) => p.id === placeId);
+    useEffect(()=>{
+      if(placeToUpdate){
+      setFormData({
+          title: {
+            value: placeToUpdate.title,
+            isValid: true,
+          },
+          desc: {
+            value: placeToUpdate.desc,
+            isValid: true,
+          },
+        },true
+      );
+      }
+      setIsLoading(false);
+    },[setFormData,placeToUpdate])
+   
+
 
   const updateSubmit = (event) => {
     event.preventDefault();
@@ -66,7 +88,17 @@ const UpdatePlace = () => {
   if (!placeToUpdate) {
     return (
       <div className="center">
-        <h2>404</h2>{" "}
+       <Card>
+       <h2>404</h2>
+       </Card>
+      </div>
+    );
+  }
+
+  if(isLoading){
+    return(
+      <div className="center">
+        <h2>Loading</h2>{" "}
       </div>
     );
   }
@@ -97,6 +129,7 @@ const UpdatePlace = () => {
         UPDATE
       </Button>
     </form>
+    
   );
 };
 

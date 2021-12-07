@@ -13,9 +13,13 @@ const App = () => {
       <MainNavigation />
       <main>
         <Routes>
-          <Route path="/" exact element={<Users />}></Route>
-          <Route path="/:userId/places" exact element={<UserPlaces />}></Route>
-          <Route path="/places/new" exact element={<NewPlace />}></Route>
+          <Route path="/" exact="true" element={<Users />}></Route>
+          <Route
+            path="/:userId/places"
+            exact="true"
+            element={<UserPlaces />}
+          ></Route>
+          <Route path="/places/new" exact="true" element={<NewPlace />}></Route>
           <Route path="/places/:placeId" element={<UpdatePlace />}></Route>
         </Routes>
       </main>

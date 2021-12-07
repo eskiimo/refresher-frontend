@@ -15,7 +15,7 @@ const NewPlace = () => {
       title: { value: "", isValid: false },
       desc: { value: "", isValid: false },
       address: { value: "", isValid: false },
-    },
+    }, 
     false
   );
 

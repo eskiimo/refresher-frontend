@@ -17,27 +17,39 @@ const formReducer = (state, action) => {
           ...state.inputs,
           [action.inputId]: { value: action.value, isValid: action.isValid },
         },
-        isValid: formIsValid,
+        isValid: formIsValid, 
+      };
+    case "SET_DATA":
+      return{
+        inputs:action.inputs,
+        isValid:action.formIsValid 
       };
     default:
       return state;
   }
 };
 
-export const useForm = (initialInputs, initValidity) => {
+export const useForm = (initialInputs, initialFormValidity) => {
   const [formState, dispatch] = useReducer(formReducer, {
     inputs: initialInputs,
-    isValid: initValidity,
+    isValid: initialFormValidity,
   });
-  const InputHandler = useCallback((id, value, isValid) => {
+  const inputHandler = useCallback((id, value, isValid) => {
     dispatch({
-      type: "INPUT_CHANGE",
+      type: 'INPUT_CHANGE',
       value: value,
       isValid: isValid,
-      inputId: id,
+      inputId: id
     });
-    // eslint-disable-next-line
   }, []);
 
-  return [formState, InputHandler];
+  const setFormData= useCallback((inputData, formIsValid)=>{
+    dispatch({
+      type:'SET_DATA',
+      inputs:inputData,
+      formIsValid:formIsValid
+    })
+  },[]);
+
+  return [formState, inputHandler,setFormData];
 };
