@@ -9,7 +9,6 @@ const Users = () => {
    const [loadedUsers, setLoadedUsers] = useState([]);
    useEffect(() => {
       const getAllUsers = async () => {
-         setIsLoading(true);
          try {
             const responseData = await sendRequest(
                'http://localhost:5000/api/users'

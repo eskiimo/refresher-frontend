@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Input from '../../shared/components/FormElements/input';
 import Button from '../../shared/components/FormElements/Button';
 import ErrorModal from '../../shared/components/UiElements/ErrorModal';
@@ -17,6 +18,7 @@ import {
 import Card from '../../shared/components/UiElements/Card';
 
 const Auth = () => {
+   const navigate = useNavigate();
    const auth = useContext(AuthContext);
    const [isLoginMode, setIsloginMode] = useState(true);
    const { isloading, error, sendRequest, clearError } = useHttpClient();
@@ -58,8 +60,7 @@ const Auth = () => {
 
       if (isLoginMode) {
          try {
-            setIsLoading(true);
-            const response = await sendRequest(
+            const responseData = await sendRequest(
                'http://localhost:5000/api/users/login',
                'POST',
                JSON.stringify({
@@ -70,14 +71,14 @@ const Auth = () => {
                   'Content-Type': 'application/json',
                }
             );
-            auth.login();
+            auth.login(responseData.user.id);
+            navigate('/');
          } catch (e) {
             console.log(e.message);
          }
       } else {
          try {
-            setIsLoading(true);
-            await sendRequest(
+            const responseData = await sendRequest(
                'http://localhost:5000/api/users/signup',
                'POST',
                JSON.stringify({
@@ -90,8 +91,7 @@ const Auth = () => {
                }
             );
 
-            auth.login(); //send to BackEnd
-            setIsLoading(false);
+            auth.login(responseData.user.id); //send to BackEnd
          } catch (e) {
             console.log(e.message);
          }

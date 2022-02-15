@@ -10,9 +10,9 @@ export const useHttpClient = () => {
       async (url, method = 'GET', body = null, headers = {}) => {
          setIsLoading(true);
          const httpAbortCtrl = new AbortController();
-         activeHttpRequest.current.push(httpAbortCtrl);
+         activeHttpRequests.current.push(httpAbortCtrl);
          try {
-            await fetch(url, {
+            const response = await fetch(url, {
                method,
                body,
                headers,

@@ -1,136 +1,135 @@
-import React,{useEffect,useState} from "react";
-import { useParams } from "react-router-dom";
-import Input from "../../shared/components/FormElements/input";
-import Button from "../../shared/components/FormElements/Button";
-import "./PlaceForm.css";
+import React, { useContext, useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import Input from '../../shared/components/FormElements/input';
+import Button from '../../shared/components/FormElements/Button';
+import './PlaceForm.css';
 
 import {
-  VALIDATOR_REQUIRE,
-  VALIDATOR_MINLENGTH,
-} from "../../shared/util/validators";
-import { useForm } from "../../shared/hooks/form-hook";
-import Card from "../../shared/components/UiElements/Card";
-
-const DUMMY_PLACES = [
-  { 
-    id: "p1",
-    title: "Cairo Tower",
-    desc: "ew3a tnot mn fo2 3shan htmot",
-    imageUrl:
-      "https://upload.wikimedia.org/wikipedia/commons/a/a0/Cairotower.jpg",
-    address: "Cairo, Egypt",
-    location: {
-      lat: 30.082782,
-      lng: 31.2073443,
-    },
-
-    creator: "u1",
-  },
-  {
-    id: "p2",
-    title: "Pyramids",
-    desc: "ew3a t23od 3la el haram",
-    imageUrl:
-      "https://lp-cms-production.imgix.net/2020-11/shutterstockRF_1037036482.jpg",
-    address: "Cairo, Egypt",
-    location: {
-      lat: 30.082782,
-      lng: 31.2073443,
-    },
-    creator: "u2",
-  },
-];
+   VALIDATOR_REQUIRE,
+   VALIDATOR_MINLENGTH,
+} from '../../shared/util/validators';
+import { useForm } from '../../shared/hooks/form-hook';
+import Card from '../../shared/components/UiElements/Card';
+import { useHttpClient } from '../../shared/hooks/http-hook';
+import ErrorModal from '../../shared/components/UiElements/ErrorModal';
+import { AuthContext } from '../../shared/context/auth-context';
 
 const UpdatePlace = () => {
-  const placeId = useParams().placeId;
-  const [isLoading,setIsLoading] =useState(true)
+   const placeId = useParams().placeId;
+   const navigate = useNavigate();
+   const auth = useContext(AuthContext);
+   const [placeToUpdate, setPlaceToUpdate] = useState();
+   const { error, isLoading, clearError, sendRequest } = useHttpClient();
 
- 
-  const [formState, inputHandler,setFormData] = useForm(
-    {
-      title: {
-        value: '',
-        isValid: false,
+   const [formState, inputHandler, setFormData] = useForm(
+      {
+         title: {
+            value: '',
+            isValid: false,
+         },
+         desc: {
+            value: '',
+            isValid: false,
+         },
       },
-      desc: {
-        value:'',
-        isValid: false,
-      },
-    },
-    false
-  );
+      false
+   );
 
-  const placeToUpdate = DUMMY_PLACES.find((p) => p.id === placeId);
-    useEffect(()=>{
-      if(placeToUpdate){
-      setFormData({
-          title: {
-            value: placeToUpdate.title,
-            isValid: true,
-          },
-          desc: {
-            value: placeToUpdate.desc,
-            isValid: true,
-          },
-        },true
-      );
+   useEffect(() => {
+      const getPlaceToUpdate = async () => {
+         try {
+            const responseData = await sendRequest(
+               `http://localhost:5000/api/places/${placeId}`
+            );
+            setPlaceToUpdate(responseData.place);
+            setFormData(
+               {
+                  title: {
+                     value: responseData.place.title,
+                     isValid: true,
+                  },
+                  desc: {
+                     value: responseData.place.desc,
+                     isValid: true,
+                  },
+               },
+               true
+            );
+         } catch (e) {}
+      };
+      getPlaceToUpdate();
+   }, [setFormData, placeId, sendRequest]);
+
+   const updateSubmit = async (event) => {
+      event.preventDefault();
+      try {
+         await sendRequest(
+            `http://localhost:5000/api/places/${placeId}`,
+            'PATCH',
+            JSON.stringify({
+               title: formState.inputs.title.value,
+               desc: formState.inputs.desc.value,
+            }),
+            {
+               'Content-Type': 'application/json',
+            }
+         );
+         navigate(`/${auth.userId}/places`);
+      } catch (e) {
+         console.log(e.message);
       }
-      setIsLoading(false);
-    },[setFormData,placeToUpdate])
-   
+   };
 
+   if (!placeToUpdate && !error) {
+      return (
+         <div className="center">
+            <Card>
+               <h2>404</h2>
+            </Card>
+         </div>
+      );
+   }
 
-  const updateSubmit = (event) => {
-    event.preventDefault();
-    console.log(formState.inputs);
-  };
-
-  if (!placeToUpdate) {
-    return (
-      <div className="center">
-       <Card>
-       <h2>404</h2>
-       </Card>
-      </div>
-    );
-  }
-
-  if(isLoading){
-    return(
-      <div className="center">
-        <h2>Loading</h2>{" "}
-      </div>
-    );
-  }
-  return (
-    <form className="place-form" onSubmit={updateSubmit}>
-      <Input
-        id="title"
-        element="input"
-        type="text"
-        label="Title"
-        validators={[VALIDATOR_REQUIRE()]}
-        errrText="enter a valid value"
-        onInput={inputHandler}
-        initialValue={formState.inputs.title.value}
-        initialValid={formState.inputs.title.isValid}
-      />
-      <Input
-        id="desc"
-        element="teaxtarea"
-        label="Description"
-        validators={[VALIDATOR_MINLENGTH(5)]}
-        errrText="enter a valid desc"
-        onInput={inputHandler}
-        initialValue={formState.inputs.desc.value}
-        initialValid={formState.inputs.desc.isValid}
-      />
-      <Button type="submit" disabled={!formState.isValid}>
-        UPDATE
-      </Button>
-    </form>
-    
-  );
+   if (isLoading) {
+      return (
+         <div className="center">
+            <h2>Loading</h2>{' '}
+         </div>
+      );
+   }
+   return (
+      <React.Fragment>
+         <ErrorModal error={error} onClear={clearError} />
+         {!isLoading && placeToUpdate && (
+            <form className="place-form" onSubmit={updateSubmit}>
+               <Input
+                  id="title"
+                  element="input"
+                  type="text"
+                  label="Title"
+                  validators={[VALIDATOR_REQUIRE()]}
+                  errrText="enter a valid value"
+                  onInput={inputHandler}
+                  initialValue={placeToUpdate.title}
+                  initialValid={true}
+               />
+               <Input
+                  id="desc"
+                  element="teaxtarea"
+                  label="Description"
+                  validators={[VALIDATOR_MINLENGTH(5)]}
+                  errrText="enter a valid desc"
+                  onInput={inputHandler}
+                  initialValue={placeToUpdate.desc}
+                  initialValid={true}
+               />
+               <Button type="submit" disabled={!formState.isValid}>
+                  UPDATE
+               </Button>
+            </form>
+         )}
+      </React.Fragment>
+   );
 };
 
 export default UpdatePlace;
