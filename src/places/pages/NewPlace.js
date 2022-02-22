@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Input from '../../shared/components/FormElements/input';
 import Button from '../../shared/components/FormElements/Button';
+import ImageUpload from '../../shared/components/FormElements/imageUpload';
 import './PlaceForm.css';
 import {
    VALIDATOR_MINLENGTH,
@@ -31,17 +32,18 @@ const NewPlace = () => {
    const onSubmitHandler = async (event) => {
       event.preventDefault();
       try {
+         const formData = new FormData();
+         formData.append('title', formState.inputs.title.value);
+         formData.append('desc', formState.inputs.desc.value);
+         formData.append('address', formState.inputs.address.value);
+         formData.append('creator', auth.userId);
+         formData.append('image', formState.inputs.image.value);
          await sendRequest(
             'http://localhost:5000/api/places',
             'POST',
-            JSON.stringify({
-               title: formState.inputs.title.value,
-               desc: formState.inputs.desc.value,
-               address: formState.inputs.address.value,
-               creator: auth.userId,
-            }),
+            formData,
             {
-               'Content-Type': 'application/json',
+               Authorization: 'Bearer ' + auth.token,
             }
          );
          //redirect ro different page
@@ -82,6 +84,7 @@ const NewPlace = () => {
                errorText="Please Enter A Valid Address"
                onInput={InputHandler}
             />
+            <ImageUpload id="image" center onInput={InputHandler} />
             <Button type="submit" disabled={!formState.isValid}>
                {' '}
                Add Place

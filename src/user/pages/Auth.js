@@ -76,7 +76,7 @@ const Auth = () => {
                   'Content-Type': 'application/json',
                }
             );
-            auth.login(responseData.user.id);
+            auth.login(responseData.userId, responseData.token);
             navigate('/');
          } catch (e) {
             console.log(e.message);
@@ -94,7 +94,7 @@ const Auth = () => {
                formData
             );
 
-            auth.login(responseData.user.id); //send to BackEnd
+            auth.login(responseData.userId, responseData.token); //send to BackEnd
          } catch (e) {
             console.log(e.message);
          }
