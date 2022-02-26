@@ -77,6 +77,7 @@ const Auth = () => {
                }
             );
             auth.login(responseData.userId, responseData.token);
+
             navigate('/');
          } catch (e) {
             console.log(e.message);
