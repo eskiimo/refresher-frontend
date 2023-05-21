@@ -17,7 +17,7 @@ import LoadingSpinner from './shared/components/UiElements/LoadingSpinner';
 import { AuthContext } from './shared/context/auth-context';
 import { useAuth } from './shared/hooks/auth-hook';
 
-const Users = React.lazy(() => import('./user/pages/Users'));
+const Users = React.lazy(() => import('./user/pages/users'));
 const NewPlace = React.lazy(() => import('./places/pages/NewPlace'));
 const UserPlaces = React.lazy(() => import('./places/pages/UserPlaces'));
 const UpdatePlace = React.lazy(() => import('./places/pages/UpdatePlace'));

@@ -11,7 +11,7 @@ const Users = () => {
       const getAllUsers = async () => {
          try {
             const responseData = await sendRequest(
-               process.env.REACT_APP_BACKENDURL + '/users'
+               process.env.REACT_APP_BACKENDURL + 'users'
             );
 
             setLoadedUsers(responseData.users);
